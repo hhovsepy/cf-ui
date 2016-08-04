@@ -46,15 +46,55 @@ def _test_cfui_single_detail_page(web_session):
     t = table(web_session)
     t.pretty_print(t.page_elements())
 
-def test_cfui_details_by_text(web_session):
+
+##   Example of usage routines
+#    nav.found_by_pattern(pattern)
+#    and table.page_as_dict()
+
+# OK
+def _test_cfui_server_details_by_text(web_session):
     nav = NavigationTree(web_session)
     nav.jump_to_middleware_servers_view()
 
-    pattern = "488ef4f1-9df2-4a79"
-    if nav.found_by_pattern(pattern):
+    server_pattern = "488ef4f1-9df2-4a79"
+    if nav.found_by_pattern(server_pattern):
         t = table(web_session)
         t.pretty_print(t.page_as_dict())
     else:
         raise ValueError("Detail page is still unavailable")
 
+# OK
+def _test_cfui_datasources_details_by_text(web_session):
+    nav = NavigationTree(web_session)
+    nav.jump_to_middleware_datasources_view()
 
+    datasource_pattern = "vso-eap7.bc.jonqe.lab.eng.bos"
+    if nav.found_by_pattern(datasource_pattern):
+        t = table(web_session)
+        t.pretty_print(t.page_as_dict())
+    else:
+        raise ValueError("Detail page is still unavailable")
+
+# failed
+def _test_cfui_deployment_deployment_by_text(web_session):
+    nav = NavigationTree(web_session)
+    nav.jump_to_middleware_providers_view()
+
+    deployment_pattern = "hawkular-command-gateway-war"
+    if nav.found_by_pattern(deployment_pattern):
+        t = table(web_session)
+        t.pretty_print(t.page_as_dict())
+    else:
+        raise ValueError("Detail page is still unavailable")
+
+# failed
+def test_cfui_provider_details_by_text(web_session):
+    nav = NavigationTree(web_session)
+    nav.jump_to_middleware_providers_view()
+
+    provider_pattern = "10.16.23.195"
+    if nav.found_by_pattern(provider_pattern):
+        t = table(web_session)
+        t.pretty_print(t.page_as_dict())
+    else:
+        raise ValueError("Detail page is still unavailable")
