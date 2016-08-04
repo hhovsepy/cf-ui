@@ -203,7 +203,7 @@ class NavigationTree():
         driver.find_element_by_name("view_list").click()
         xpath = "//*[contains(text(), '{}')]".format(pattern)
         click_points = driver.find_elements_by_xpath(xpath)
-        if len(click_points) > 1:
+        if len(click_points) > 0:
             click_point = click_points[0]
             if self.is_ok(click_point):
                 click_point.click()

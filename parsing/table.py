@@ -90,10 +90,10 @@ class table():
         table_rows = self.driver.find_elements_by_xpath(table_locator)
 
         for table_row in table_rows:
-            print "\n > table row: ", table_row.text
+            #print "\n > table row: ", table_row.text
             tds = table_row.find_elements_by_tag_name("td")
             property_name = "'{}'".format(tds[0].text)
-            print "tds's size: ", len(tds), " -- property_name: ", property_name
+            #print "tds's size: ", len(tds), " -- property_name: ", property_name
             property_value = None
 
             if len(tds) == 1:

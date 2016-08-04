@@ -55,7 +55,6 @@ def test_cfui_details_by_text(web_session):
 
     pattern = "488ef4f1-9df2-4a79"
     if nav.found_by_pattern(pattern):
-        sleep(5)
         t = table(web_session)
         t.pretty_print(t.page_elements())
     else:
