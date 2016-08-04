@@ -202,11 +202,27 @@ class NavigationTree():
         driver = self.web_driver
         driver.find_element_by_name("view_list").click()
         xpath = "//*[contains(text(), '{}')]".format(pattern)
+
+        # add check if server is alone
+        click_point = None
         click_points = driver.find_elements_by_xpath(xpath)
-        if len(click_points) > 0:
+
+        found = len(click_points)
+        if found == 0:
+            print "Nothing found. Stop."
+            return False
+
+        """
+        if found == 1:
+            print "Only 1 found. Ok."
             click_point = click_points[0]
-            if self.is_ok(click_point):
-                click_point.click()
-            else:
-                self.go_up_till_clickable(click_point)
+        """
+
+        if found > 0:
+            click_point = click_points[0]
+
+        if self.is_ok(click_point):
+            click_point.click()
+        else:
+            self.go_up_till_clickable(click_point)
         return True
