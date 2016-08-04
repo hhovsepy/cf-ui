@@ -76,7 +76,7 @@ def _test_cfui_datasources_details_by_text(web_session):
         raise ValueError("Detail page is still unavailable")
 
 # failed
-def _test_cfui_deployment_deployment_by_text(web_session):
+def test_cfui_deployment_details_by_text(web_session):
     nav = NavigationTree(web_session)
     nav.jump_to_middleware_providers_view()
 
@@ -87,8 +87,8 @@ def _test_cfui_deployment_deployment_by_text(web_session):
     else:
         raise ValueError("Detail page is still unavailable")
 
-# failed
-def test_cfui_provider_details_by_text(web_session):
+# OK
+def _test_cfui_provider_details_by_text(web_session):
     nav = NavigationTree(web_session)
     nav.jump_to_middleware_providers_view()
 
