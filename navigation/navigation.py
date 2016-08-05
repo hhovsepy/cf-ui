@@ -201,22 +201,20 @@ class NavigationTree():
     def found_by_pattern(self, pattern):
         driver = self.web_driver
         driver.find_element_by_name("view_list").click()
-        xpath = "//*[contains(text(), '{}')]".format(pattern)
+        print "Actual URL: ", driver.current_url
+        #xpath = ".//*[@id='list_grid']/table/tbody/tr/td[contains(., 'hawkular-command-gateway-war')]"
+        xpath = ".//*[@id='list_grid']/table/tbody/tr/td[contains(., '{}')]".format(pattern)
 
-        # add check if server is alone
+        print "Actual xpath: ", xpath
         click_point = None
         click_points = driver.find_elements_by_xpath(xpath)
-
         found = len(click_points)
-        if found == 0:
-            print "Nothing found. Stop."
-            return False
+        print "Full found ({}).".format(found)
+        print "", click_points
 
-        """
-        if found == 1:
-            print "Only 1 found. Ok."
-            click_point = click_points[0]
-        """
+        if found == 0:
+            print "Nothing found ({}). Stop.".format(found)
+            return False
 
         if found > 0:
             click_point = click_points[0]
