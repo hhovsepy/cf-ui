@@ -50,8 +50,12 @@ def _test_cfui_single_detail_page(web_session):
 ##   Example of usage routines
 #    nav.found_by_pattern(pattern)
 #    and table.page_as_dict()
+#
+#    If pattern matches to multiple instances would be used right first.
+#    Take correct patterns!
+#
 
-# OK
+
 def test_cfui_server_details_by_text(web_session):
     nav = NavigationTree(web_session)
     nav.jump_to_middleware_servers_view()
@@ -63,7 +67,7 @@ def test_cfui_server_details_by_text(web_session):
     else:
         raise ValueError("Detail page is still unavailable")
 
-# OK
+
 def test_cfui_datasources_details_by_text(web_session):
     nav = NavigationTree(web_session)
     nav.jump_to_middleware_datasources_view()
@@ -75,7 +79,7 @@ def test_cfui_datasources_details_by_text(web_session):
     else:
         raise ValueError("Detail page is still unavailable")
 
-# OK
+
 def test_cfui_deployment_details_by_text(web_session):
     nav = NavigationTree(web_session)
     nav.jump_to_middleware_deployment_view()
@@ -87,7 +91,7 @@ def test_cfui_deployment_details_by_text(web_session):
     else:
         raise ValueError("Detail page is still unavailable")
 
-# OK
+
 def test_cfui_provider_details_by_text(web_session):
     nav = NavigationTree(web_session)
     nav.jump_to_middleware_providers_view()
