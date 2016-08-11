@@ -65,28 +65,44 @@ def test_fast_navigation(web_session):
     nav.jump_to_middleware_providers_view()
     nav.jump_to_middleware_servers_view()
     nav.jump_to_topology_view()
-"""
+
 
 def test_cfui_provider_details(web_session):
     nav = NavigationTree(web_session)
     nav.jump_to_middleware_providers_view()
     nav.to_first_details()
-    pass
+
 
 def test_cfui_deployment_details(web_session):
     nav = NavigationTree(web_session)
     nav.jump_to_middleware_deployment_view()
     nav.to_first_details()
-    pass
+
 
 def test_cfui_server_details(web_session):
     nav = NavigationTree(web_session)
     nav.jump_to_middleware_servers_view()
     nav.to_first_details()
-    pass
+
 
 def test_cfui_datasource_details(web_session):
     nav = NavigationTree(web_session)
     nav.jump_to_middleware_datasources_view()
     nav.to_first_details()
-    pass
+"""
+
+from time import sleep
+def test_cfui_select(web_session):
+    NavigationTree(web_session).jump_to_middleware_providers_view().to_first_details().select_and_click("Monitoring", "Timelines")
+    sleep(5)
+
+
+def test_cfui_navigate_select(web_session):
+    NavigationTree(web_session).jump_to_middleware_servers_view().to_first_details().select_and_click('Policy', 'Edit Tags') # .hold_on(5).set_tag('Department', 'Engineering')
+
+
+def test_cfui_negative_navigate_select(web_session):
+    try:
+        NavigationTree(web_session).jump_to_middleware_servers_view().to_first_details().select_and_click('Policy', 'EditTags')
+    except:
+        print "Negative test - it works!"
