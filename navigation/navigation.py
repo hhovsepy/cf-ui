@@ -305,15 +305,21 @@ class NavigationTree():
     def drop_all_tags(self):
         driver = self.web_driver
         magic_xpath = "//td[@title='Click to remove this assignment']"
-        for _ in driver.find_elements_by_xpath(magic_xpath):
+        tag_list = driver.find_elements_by_xpath(magic_xpath)
+        if tag_list == []:
+            print "== Nothing to remove. Put some tags before! =="
+            return self
+        # else
+        for _ in tag_list:
             sleep(3)
+            # recalculate tag including again - ok
             x_button = driver.find_element_by_xpath(magic_xpath)
             sleep(1)
             x_button.click()
-
         sleep(3)
         xpath_save = "//button[@title='Save Changes']"
         save_button = driver.find_element_by_xpath(xpath_save)
         sleep(2)
         save_button.click()
         sleep(3)
+        return self
