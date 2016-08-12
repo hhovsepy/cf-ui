@@ -324,3 +324,10 @@ class NavigationTree():
         sleep(3)
         return self
 
+    # TODO: generalise to click_first_item()
+    def check_first_datasource(self):
+        # given we stand on datasource list view
+        driver = self.web_driver
+        xpath = "//input[contains(@class,'list-grid-checkbox')]"
+        checkbox = driver.find_element_by_xpath(xpath)
+        checkbox.click()
