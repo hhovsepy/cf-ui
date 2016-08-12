@@ -92,14 +92,10 @@ def test_cfui_datasource_details(web_session):
 """
 
 from time import sleep
+
 def _test_cfui_select(web_session):
     NavigationTree(web_session).jump_to_middleware_providers_view().to_first_details().select_and_click("Monitoring", "Timelines")
-    sleep(5)
-
-
-def test_cfui_navigate_select(web_session):
-    NavigationTree(web_session).jump_to_middleware_servers_view().to_first_details().select_and_click('Policy', 'Edit Tags').hold_on(5).set_tag('Department', 'Engineering')
-    sleep(4)
+    sleep(1)
 
 
 def _test_cfui_negative_navigate_select(web_session):
@@ -107,3 +103,40 @@ def _test_cfui_negative_navigate_select(web_session):
         NavigationTree(web_session).jump_to_middleware_servers_view().to_first_details().select_and_click('Policy', 'EditTags')
     except:
         print "Negative test - it works!"
+
+# for multiple operations
+tag_cat = 'Department'
+tag_add = 'Engineering'
+
+def _test_cfui_set_tag(web_session):
+    NavigationTree(web_session).jump_to_middleware_servers_view()\
+        .to_first_details()\
+        .select_and_click('Policy', 'Edit Tags')\
+        .hold_on(5)\
+        .set_tag(tag_cat, tag_add)
+    sleep(1)
+
+
+def _test_cfui_drop_tag(web_session):
+    NavigationTree(web_session).jump_to_middleware_servers_view().\
+        to_first_details()\
+        .select_and_click('Policy', 'Edit Tags')\
+        .hold_on(5)\
+        .drop_tag(tag_cat, tag_add)
+    sleep(1)
+
+
+def test_cfui_drop_all_tags(web_session):
+    NavigationTree(web_session).jump_to_middleware_servers_view().\
+        to_first_details()\
+        .select_and_click('Policy', 'Edit Tags') \
+        .hold_on(2) \
+        .drop_all_tags()
+    sleep(1)
+
+
+def _test_cfui_wrong_drop_tag(web_session):
+    try:
+        NavigationTree(web_session).jump_to_middleware_servers_view().to_first_details().select_and_click('Policy', 'Edit Tags').hold_on(5).drop_tag('Department', 'Engiingghuheuiwh')
+    except:
+        print "Negative test (wrong drop of tag) - it works!"
