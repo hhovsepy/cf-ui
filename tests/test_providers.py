@@ -14,9 +14,11 @@ def web_session(request):
 
     return web_session
 
+"""
 def test_cfui_add_provider(web_session):
     provs = providers(web_session)
     provs.add_provider()
+
 
 def test_cfui_update_provider(web_session):
     provs = providers(web_session)
@@ -40,3 +42,9 @@ def test_cfui_validate_providers_list(web_session):
 def test_cfui_validate_providers_details(web_session):
     assert providers(web_session).validate_providers_details()
 
+"""
+
+
+def test_cfui_add_wrong_provider(web_session):
+    provs = providers(web_session)
+    provs.add_wrong_provider()
