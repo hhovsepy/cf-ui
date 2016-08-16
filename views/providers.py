@@ -294,27 +294,24 @@ class providers():
 
         return True
 
+
     def add_wrong_provider(self):
         self.web_session.logger.info("Wrong attempt to add Middleware Provider.")
         self.provider_name = self.web_session.HAWKULAR_PROVIDER_NAME
         self.host_name = self.web_session.HAWKULAR_HOSTNAME
-        self.port = self.web_session.HAWKULAR_PORT
+
+        #self.port = self.web_session.HAWKULAR_PORT
+        # make port wrong
+        self.port = self.web_session.HAWKULAR_PORT + '100'
+        print "Actual port number=", self.port
+
         self.hawkular_user = self.web_session.HAWKULAR_USERNAME
         self.hawkular_password = self.web_session.HAWKULAR_PASSWORD
 
-        NavigationTree(self.web_session).jump_to_middleware_providers_view().select_and_click('Configuration', 'Add a new Middileware Provider')
+
+        NavigationTree(self.web_session).jump_to_middleware_providers_view().select_and_click('Configuration', 'Add a New Middleware Provider')
         self.web_driver.implicitly_wait(5)
 
-
-        """
-        elem_config = self.web_driver.find_element_by_xpath("//button[@title='Configuration']")
-        elem_config.click()
-        assert ui_utils(self.web_session).waitForTextOnPage("Add a New Middleware Provider", 15)
-        elem_add_new_provider = self.web_driver.find_element_by_xpath("//a[@title='Add a New Middleware Provider']")
-        elem_add_new_provider.click()
-        self.web_driver.implicitly_wait(15)
-        assert ui_utils(self.web_session).waitForTextOnPage("Confirm Password", 15)
-        """
         # Enter the form details and submit to add the provider
 
         self.web_driver.find_element_by_xpath("//button[@data-id='server_emstype']").click()
