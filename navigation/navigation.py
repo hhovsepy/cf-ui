@@ -1,5 +1,6 @@
 from selenium.webdriver.common.action_chains import ActionChains
 from time import sleep
+from common.ui_utils import ui_utils
 
 from selenium import webdriver
 from selenium.webdriver.common.by import By
@@ -122,7 +123,7 @@ class NavigationTree():
             operation = action._operation._operation
             elem = driver.find_element_by_xpath(target)
             hover.move_to_element(elem).perform()
-            sleep(2) # wait sec to load menu
+            sleep(2)
             if operation == "Click":
                 elem.click()
             sleep(2)
@@ -263,7 +264,7 @@ class NavigationTree():
                 print "Tag_name is substring of : ", option.text
                 sleep(1)
                 self.go_up_till_clickable(option)
-        sleep(3)
+        ui_utils(self.web_session).waitForTextOnPage(tag_name, 5)
 
         click1 = driver.find_element_by_xpath("//button[@data-toggle='dropdown'][@data-id='tag_add']")
         self.power_click(click1)
@@ -276,6 +277,7 @@ class NavigationTree():
                 sleep(1)
                 self.go_up_till_clickable(option)
         sleep(3)
+        #ui_utils(self.web_session).waitForTextOnPage(tag_value, 5)
 
         xpath_save = "//div[@id='buttons_on']/button[@title='Save Changes']"
         save_button = driver.find_element_by_xpath(xpath_save)
