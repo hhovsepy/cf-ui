@@ -37,7 +37,7 @@ def test_cfui_providers_download_txt(web_session):
     r = glob.glob(file)
     for i in r:
         assert os.path.exists(i)
-        return True
+
 
 def test_cfui_server_download_txt(web_session):
     nav = NavigationTree(web_session).navigate_to_middleware_servers_view()
@@ -52,7 +52,7 @@ def test_cfui_server_download_txt(web_session):
     r = glob.glob(file)
     for i in r:
         assert os.path.exists(i)
-        return True
+
 
 def test_cfui_datasource_download_txt(web_session):
     nav = NavigationTree(web_session).navigate_to_middleware_datasources_view()
@@ -67,7 +67,7 @@ def test_cfui_datasource_download_txt(web_session):
     r = glob.glob(file)
     for i in r:
         assert os.path.exists(i)
-        return True
+
 
 def test_cfui_deployment_download_txt(web_session):
     nav = NavigationTree(web_session).navigate_to_middleware_deployment_view()
@@ -76,10 +76,9 @@ def test_cfui_deployment_download_txt(web_session):
 
     web_session.logger.info("Begin download deployment report as cvv test")
     assert download_report(web_session,"middleware_deployment").csv_format()
-    
+
     web_session.logger.info("Begin deployment file assert")
     file = "{}{}".format(os.getenv("HOME"), '/Downloads/Middleware Deployments*')
     r = glob.glob(file)
     for i in r:
         assert os.path.exists(i)
-        return True

@@ -200,8 +200,7 @@ class providers():
 
         # Verify if the provider is deleted from the provider list.
 
-        assert ui_utils(self.web_session).waitForElementOnPage(By.XPATH, "//a[@title='{}']".format(
-            self.web_session.HAWKULAR_PROVIDER_NAME), 120, exist=False)
+
         if not ui_utils(self.web_session).isTextOnPage(self.web_session.HAWKULAR_PROVIDER_NAME):
             self.web_session.logger.info(
                 "The provider - {} - is deleted successfully".format(self.web_session.HAWKULAR_HOSTNAME))
