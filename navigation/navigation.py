@@ -100,6 +100,8 @@ class NavigationTree():
         self.add_point("middleware_datasources", "id('#menu-mdl')/ul/li[4]/a/span", "Click")
         self.add_point(              "topology", "id('#menu-mdl')/ul/li[5]/a/span", "Click")
 
+    def waiting(self, xpath, seconds):
+        return WebDriverWait(self.web_driver, seconds).until(EC.element_to_be_clickable((By.XPATH, xpath)))
 
     def navigate(self, route, force_navigation=True):
         driver = self.web_driver
@@ -222,20 +224,25 @@ class NavigationTree():
         sleep(last)
         return self
 
+
     def power_click(self, clickable):
         driver = self.web_driver
         hover = ActionChains(driver)
-        if clickable:
-            hover.move_to_element(clickable).perform()
-            clickable.click()
-
+        #self.waiting(clickable, 15)
+        WebDriverWait(self.web_driver, 15) \
+            .until(clickable)
+            #.until(EC.element_to_be_clickable(clickable))
+        #if self.waiting(clickable, 15):
+        hover.move_to_element(clickable).perform()
+        clickable.click()
+    """
     def _select_no_htlml_tag(self, click_point, select_option):
         xpath_top = ".//div[contains(@class, 'dropdown')]/button[contains(.,'{}')]".format(click_point)
         xpath_select = "{}/../ul[contains(@class, 'dropdown-menu')]/li/a[contains(.,'{}')]".format(xpath_top, select_option)
         driver = self.web_driver
         self.power_click(driver.find_element_by_xpath(xpath_top))
         self.power_click(driver.find_element_by_xpath(xpath_select))
-
+    """
 
     def select_and_click(self, click_point, select_option):
         driver = self.web_driver
@@ -245,83 +252,11 @@ class NavigationTree():
 
         found_from = driver.find_elements_by_xpath(xpath_from)
         found_select = driver.find_elements_by_xpath(xpath_select)
-        if len(found_from)==0 or len(found_select)==0:
+        if len(found_from)==0 or len(found_select) == 0:
             raise Exception("Page does not contain such pattern(s) {}, {}: ".format(click_point, select_option))
 
         self.power_click(driver.find_element_by_xpath(xpath_top))
         self.power_click(driver.find_element_by_xpath(xpath_select))
         return self
 
-    def set_tag(self, tag_name, tag_value):
-        driver = self.web_driver
-        print "Current URL: ", driver.current_url
-        click1 = driver.find_element_by_xpath("//button[@data-toggle='dropdown'][@data-id='tag_cat']")
-        self.power_click(click1)
-
-        all_options = driver.find_elements_by_xpath("//select[@id='tag_cat']/../div[contains(@class, 'btn-group')]/div/ul/li/a")
-        for option in all_options:
-            if tag_name in option.text:
-                print "Tag_name is substring of : ", option.text
-                sleep(1)
-                self.go_up_till_clickable(option)
-        ui_utils(self.web_session).waitForTextOnPage(tag_name, 5)
-
-        click1 = driver.find_element_by_xpath("//button[@data-toggle='dropdown'][@data-id='tag_add']")
-        self.power_click(click1)
-        sleep(3)
-
-        all_options = driver.find_elements_by_xpath("//select[@id='tag_add']/../div[contains(@class, 'btn-group')]/div/ul/li/a")
-        for option in all_options:
-            if tag_value in option.text:
-                print "Tag_value is substring of : ", option.text
-                sleep(1)
-                self.go_up_till_clickable(option)
-        sleep(3)
-        #ui_utils(self.web_session).waitForTextOnPage(tag_value, 5)
-
-        xpath_save = "//div[@id='buttons_on']/button[@title='Save Changes']"
-        save_button = driver.find_element_by_xpath(xpath_save)
-        self.power_click(save_button)
-        sleep(3)
-        return self
-
-    def drop_tag(self, tag_name, tag_value):
-        driver = self.web_driver
-
-        magic_xpath = "//td[contains(., '{}')]/../td[contains(., '{}')]/../td[contains(@title, 'to remove this assignment')]".format(tag_name, tag_value)
-        print "Exact xpath to remove tag: ", magic_xpath
-        magic_button = None
-        try:
-            magic_button = driver.find_element_by_xpath(magic_xpath)
-        except:
-            raise ValueError("These tag name or tag value not present on page: {} | {}".format(tag_name, tag_value))
-
-        self.power_click(magic_button)
-        sleep(2)
-        xpath_save = "//div[@id='buttons_on']/button[@title='Save Changes']"
-        save_button = driver.find_element_by_xpath(xpath_save)
-        self.power_click(save_button)
-        return self
-
-
-    def drop_all_tags(self):
-        driver = self.web_driver
-        magic_xpath = "//td[@title='Click to remove this assignment']"
-        tag_list = driver.find_elements_by_xpath(magic_xpath)
-        if tag_list == []:
-            print "== Nothing to remove. Put some tags before! =="
-            return self
-        # else
-        for _ in tag_list:
-            sleep(3)
-            # recalculate tag including again - ok
-            x_button = driver.find_element_by_xpath(magic_xpath)
-            sleep(1)
-            x_button.click()
-        sleep(3)
-        xpath_save = "//button[@title='Save Changes']"
-        save_button = driver.find_element_by_xpath(xpath_save)
-        sleep(2)
-        save_button.click()
-        sleep(3)
-        return self
+    ## MOVED to tags/tags.py
