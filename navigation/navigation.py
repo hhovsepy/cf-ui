@@ -133,6 +133,10 @@ class NavigationTree():
             self.web_session.logger.warning(" Clicking goes on next turn. Possibly, recursion...")
             self.click_turn( driver, step )
 
+###
+        NavigationTree(self.web_session).navigate_to_middleware_servers_view()
+###
+
 
     def navigate_to_middleware_providers_view(self):
         self.navigate(UI_Route("middleware").add("middleware_providers"))
@@ -195,7 +199,9 @@ class NavigationTree():
 
 
     def is_ok(self, point):
-        if point.is_displayed() and point.is_enabled():
+        if point.is_displayed() \
+                and \
+                point.is_enabled():
             return True
 
     def go_up_till_clickable(self, click_point):
@@ -228,21 +234,14 @@ class NavigationTree():
     def power_click(self, clickable):
         driver = self.web_driver
         hover = ActionChains(driver)
+        sleep(3)
         #self.waiting(clickable, 15)
-        WebDriverWait(self.web_driver, 15) \
-            .until(clickable)
+        #WebDriverWait(self.web_driver, 15) \
+        #   .until(clickable)
             #.until(EC.element_to_be_clickable(clickable))
         #if self.waiting(clickable, 15):
         hover.move_to_element(clickable).perform()
         clickable.click()
-    """
-    def _select_no_htlml_tag(self, click_point, select_option):
-        xpath_top = ".//div[contains(@class, 'dropdown')]/button[contains(.,'{}')]".format(click_point)
-        xpath_select = "{}/../ul[contains(@class, 'dropdown-menu')]/li/a[contains(.,'{}')]".format(xpath_top, select_option)
-        driver = self.web_driver
-        self.power_click(driver.find_element_by_xpath(xpath_top))
-        self.power_click(driver.find_element_by_xpath(xpath_select))
-    """
 
     def select_and_click(self, click_point, select_option):
         driver = self.web_driver

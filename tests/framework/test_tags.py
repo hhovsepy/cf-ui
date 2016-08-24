@@ -98,9 +98,10 @@ def test_cfui_set_few_tags(web_session):
     web_session.logger.info("Starting to set given tags")
     for tag_key in tag_dict.keys():
         for tag_value in tag_dict[tag_key]:
-            sleep(2)
-            t.set_tag(tag_key, tag_value)
+            web_session.logger.info( " - Set tag: {} -> {}".format(tag_key, tag_value))
+            t.set_tag(tag_key, tag_value, navigation=True)
 
+    """
     # removing all tags
     web_session.logger.info(" == drop all tags == ")
     t.drop_all_tags()
@@ -116,3 +117,4 @@ def test_cfui_set_few_tags(web_session):
         for tag_value in stored_tags[tag_key]:
             print "Restore (", tag_key, " - ", tag_value, ")"
             t.set_tag(tag_key, tag_value)
+    """
