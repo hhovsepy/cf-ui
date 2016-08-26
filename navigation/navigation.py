@@ -188,6 +188,22 @@ class NavigationTree():
         self._jump_to('middleware_domains', force_navigation)
         return self
 
+    def select_and_click(self, click_point, select_option):
+        driver = self.web_driver
+        xpath_from = ".//*[contains(text(), '{}')]".format(click_point)
+        xpath_top = ".//div[contains(@class, 'dropdown')]/button[contains(.,'{}')]".format(click_point)
+        xpath_select = "{}/../ul[contains(@class, 'dropdown-menu')]/li/a[contains(.,'{}')]".format(xpath_top, select_option)
+
+        found_from = driver.find_elements_by_xpath(xpath_from)
+        found_select = driver.find_elements_by_xpath(xpath_select)
+        if len(found_from)==0 or len(found_select)==0:
+            raise Exception("Page does not contain such pattern(s) {}, {}: ".format(click_point, select_option))
+
+        #self.power_click(driver.find_element_by_xpath(xpath_top))
+        driver.find_element_by_xpath(xpath_top).click()
+        #self.power_click(driver.find_element_by_xpath(xpath_select))
+        driver.find_element_by_xpath(xpath_select).click()
+        return self
 
     def to_exact_details(self, param='first'):
 
