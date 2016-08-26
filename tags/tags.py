@@ -16,7 +16,7 @@ class tags():
     def __init__(self, _web_session):
         self.web_session = _web_session
         self.web_driver = _web_session.web_driver
-        self.nav = NavigationTree(self.web_session)
+        #self.nav = NavigationTree(self.web_session)
 
 
     def waiting_ability(self, xpath, seconds):
@@ -134,12 +134,12 @@ class tags():
         except:
             raise ValueError("These tag name or tag value not present on page: {} | {}".format(tag_name, tag_value))
 
-        self.nav.power_click(magic_button)
+        magic_button.click()
         sleep(2)
         xpath_save = "//div[@id='buttons_on']/button[@title='Save Changes']"
         save_button = driver.find_element_by_xpath(xpath_save)
 
-        self.nav.power_click(save_button)
+        save_button.click()
         return self
 
 

@@ -1,12 +1,5 @@
 from selenium.webdriver.common.action_chains import ActionChains
 from time import sleep
-from common.ui_utils import ui_utils
-
-from selenium import webdriver
-from selenium.webdriver.common.by import By
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
-
 
 class UI_Point():
 
@@ -80,12 +73,22 @@ class NavigationTree():
     web_session = None
 
     paths = {
-                'middleware_servers'     : '/middleware_server/show_list',
-                'middleware_deployments' : '/middleware_deployment/show_list',
-                'middleware_datasources' : '/middleware_datasource/show_list',
-                'middleware_providers'   : '/ems_middleware/show_list',
-                              'topology' : '/middleware_topology/show',
-            }
+        'middleware_providers'   : '/ems_middleware/show_list',
+        'middleware_domains'     : '/middleware_domain/show_list',
+        'middleware_servers'     : '/middleware_server/show_list',
+        'middleware_deployments' : '/middleware_deployment/show_list',
+        'middleware_datasources' : '/middleware_datasource/show_list',
+                      'topology' : '/middleware_topology/show',
+        }
+
+    page_marks = {
+        'middleware_providers'   : '/ems_middleware/show_list',
+        'middleware_domains'     : '/middleware_domain/show_list',
+        'middleware_servers'     : '/middleware_server/show_list',
+        'middleware_deployments' : '/middleware_deployment/show_list',
+        'middleware_datasources' : '/middleware_datasource/show_list',
+                      'topology' : '/middleware_topology/show',
+        }
 
     def add_point(self, name, location, action):
         self._tree.update( { name : UI_Action( UI_Point(name, location), UI_Operation(action)) } )
@@ -93,15 +96,15 @@ class NavigationTree():
     def __init__(self, session):
         self.web_session = session
         self.web_driver = self.web_session.web_driver
-        self.add_point("middleware", "id('maintab')/li[6]/a/span[2]", "Hover")
-        self.add_point("middleware_providers",   "id('#menu-mdl')/ul/li[1]/a/span", "Click")
-        self.add_point("middleware_servers",     "id('#menu-mdl')/ul/li[2]/a/span", "Click")
-        self.add_point("middleware_deployments", "id('#menu-mdl')/ul/li[3]/a/span", "Click")
-        self.add_point("middleware_datasources", "id('#menu-mdl')/ul/li[4]/a/span", "Click")
-        self.add_point(              "topology", "id('#menu-mdl')/ul/li[5]/a/span", "Click")
 
-    def waiting(self, xpath, seconds):
-        return WebDriverWait(self.web_driver, seconds).until(EC.element_to_be_clickable((By.XPATH, xpath)))
+        self.add_point("middleware", ".//*[@id='maintab']/li[6]/a/span[contains(.,'Middleware')]", "Hover")
+        self.add_point("middleware_providers",   "id('#menu-mdl')//span[contains(.,'Middleware Providers')]", "Click")
+        self.add_point("middleware_domains",     "id('#menu-mdl')//span[contains(.,'Middleware Domains')]/..", "Click")
+        self.add_point("middleware_servers",     "id('#menu-mdl')//span[contains(.,'Middleware Servers')]", "Click")
+        self.add_point("middleware_deployments", "id('#menu-mdl')//span[contains(.,'Middleware Deployments')]", "Click")
+        self.add_point("middleware_datasources", "id('#menu-mdl')//span[contains(.,'Middleware Datasources')]", "Click")
+        self.add_point("topology",               "id('#menu-mdl')//span[contains(.,'Topology')]", "Click")
+
 
     def navigate(self, route, force_navigation=True):
         driver = self.web_driver
@@ -125,17 +128,13 @@ class NavigationTree():
             operation = action._operation._operation
             elem = driver.find_element_by_xpath(target)
             hover.move_to_element(elem).perform()
-            sleep(2)
+            sleep(2) # wait sec to load menu
             if operation == "Click":
                 elem.click()
             sleep(2)
         except:
             self.web_session.logger.warning(" Clicking goes on next turn. Possibly, recursion...")
             self.click_turn( driver, step )
-
-###
-        NavigationTree(self.web_session).navigate_to_middleware_servers_view()
-###
 
 
     def navigate_to_middleware_providers_view(self):
@@ -185,23 +184,57 @@ class NavigationTree():
         self._jump_to('topology', force_navigation)
         return self
 
-    def to_first_details(self):
+    def jump_to_middleware_domain_view(self, force_navigation=True):
+        self._jump_to('middleware_domains', force_navigation)
+        return self
+
+
+    def to_exact_details(self, param='first'):
+
         driver = self.web_driver
         list_view_click = "//i[contains(@class,'fa fa-th-list')]"
         first_item = ".//*[@id='list_grid']/table/tbody/tr"
+
         driver.find_element_by_xpath(list_view_click).click()
         sub_links = driver.find_elements_by_xpath(first_item)
-        if len(sub_links)>0:
-            sub_links[0].click()
+        num_link = len(sub_links)
+        ind = None
+        use_numeric_param = False
+        try:
+            ind = int(param) - 1 ## Visual numeration from 1 !!
+            use_numeric_param = True
+        except: pass
+
+        assert (use_numeric_param == True or param == 'first' or param == 'last'), "-- Possible wrong value of param '{}'?".format(param)
+
+        if len(sub_links) > 0:
+
+            if param == 'first':
+                sub_links[0].click()
+
+            elif param=='last':
+                sub_links[num_link - 1].click()
+
+            elif use_numeric_param:
+                assert (ind <= num_link and ind >= 0), "-- Definitely wrong value of param: '{}'".format(param)
+                sub_links[ind].click()
+
         else:
-            raise ValueError("Not enough items for searching!")
+            # raise ValueError("Not enough items for searching!") # ??
+            print "Not enough items for selection!"
+        return self
+
+    def to_first_details(self):
+        self.to_exact_details('first')
+        return self
+
+    def to_last_details(self):
+        self.to_exact_details('last')
         return self
 
 
     def is_ok(self, point):
-        if point.is_displayed() \
-                and \
-                point.is_enabled():
+        if point.is_displayed() and point.is_enabled():
             return True
 
     def go_up_till_clickable(self, click_point):
@@ -225,37 +258,3 @@ class NavigationTree():
             else:
                 self.go_up_till_clickable(click_point)
         return True
-
-    def hold_on(self, last):
-        sleep(last)
-        return self
-
-
-    def power_click(self, clickable):
-        driver = self.web_driver
-        hover = ActionChains(driver)
-        sleep(3)
-        #self.waiting(clickable, 15)
-        #WebDriverWait(self.web_driver, 15) \
-        #   .until(clickable)
-            #.until(EC.element_to_be_clickable(clickable))
-        #if self.waiting(clickable, 15):
-        hover.move_to_element(clickable).perform()
-        clickable.click()
-
-    def select_and_click(self, click_point, select_option):
-        driver = self.web_driver
-        xpath_from = ".//*[contains(text(), '{}')]".format(click_point)
-        xpath_top = ".//div[contains(@class, 'dropdown')]/button[contains(.,'{}')]".format(click_point)
-        xpath_select = "{}/../ul[contains(@class, 'dropdown-menu')]/li/a[contains(.,'{}')]".format(xpath_top, select_option)
-
-        found_from = driver.find_elements_by_xpath(xpath_from)
-        found_select = driver.find_elements_by_xpath(xpath_select)
-        if len(found_from)==0 or len(found_select) == 0:
-            raise Exception("Page does not contain such pattern(s) {}, {}: ".format(click_point, select_option))
-
-        self.power_click(driver.find_element_by_xpath(xpath_top))
-        self.power_click(driver.find_element_by_xpath(xpath_select))
-        return self
-
-    ## MOVED to tags/tags.py

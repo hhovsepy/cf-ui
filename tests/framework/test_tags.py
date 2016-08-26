@@ -6,7 +6,7 @@ from time import sleep
 
 @pytest.fixture (scope='session')
 def web_session(request):
-    web_session = session()
+    web_session = session(add_provider=False)
 
     def closeSession():
         print ("Close browser session")
@@ -91,6 +91,7 @@ def test_cfui_set_few_tags(web_session):
 
     web_session.logger.info("Current URL: " + web_session.web_driver.current_url)
 
+    """
     web_session.logger.info("collect existent tags")
     stored_tags = t.tag_list_ui()
     print "STORED TAGS == ", stored_tags
@@ -101,7 +102,7 @@ def test_cfui_set_few_tags(web_session):
             web_session.logger.info( " - Set tag: {} -> {}".format(tag_key, tag_value))
             t.set_tag(tag_key, tag_value, navigation=True)
 
-    """
+
     # removing all tags
     web_session.logger.info(" == drop all tags == ")
     t.drop_all_tags()
