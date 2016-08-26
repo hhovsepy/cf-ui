@@ -4,7 +4,7 @@ from navigation.navigation import NavigationTree
 
 @pytest.fixture (scope='session')
 def web_session(request):
-    web_session = session()
+    web_session = session(add_provider=False)
 
     def closeSession():
         print ("Close browser session")
