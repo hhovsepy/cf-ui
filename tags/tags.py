@@ -92,8 +92,6 @@ class tags():
         #self.click_tag_save()
         self.web_session.logger.info(" Press Save button")
         self.tag_click(xpath_save_shadow, 7)
-
-
         return self
 
 
