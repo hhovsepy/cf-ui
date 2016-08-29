@@ -91,11 +91,18 @@ class domains():
 
             # To Do: get Table hawkular_api table
             server_groups_ui = self.ui_utils.get_list_table()
+            server_groups_hawk = self.hawkular_api.get_hawkular_server_groups(domain.get('Feed'))
 
             for server_group in server_groups_ui:
                 name = server_group.get('Server Group Name')
                 server_group_db = self.ui_utils.find_row_in_list(server_groups_db, 'name', name)
                 assert server_group_db, "Server Group {} not found in DB".format(name)
+
+                server_group_hawk = self.ui_utils.find_row_in_list(server_groups_hawk, 'name', name)
+                assert server_group_hawk, "Server Group {} not found in Hawkular".format(name)
+
+                assert name in server_group_hawk.get('name')
+                assert name == server_group_db.get('name')
 
                 assert server_group.get('Feed') == server_group_db.get('feed')
                 assert server_group.get('Profile') == server_group_db.get('profile')
@@ -127,12 +134,14 @@ class domains():
             for server_group in server_groups_ui:
                 name_ui = server_group.get('Server Group Name')
                 self.ui_utils.click_on_row_containing_text(name_ui)
+                self.ui_utils.waitForTextOnPage("Summary", 15)
 
                 group_details_ui = self.ui_utils.get_generic_table_as_dict()
                 group_details_db = self.ui_utils.find_row_in_list(server_groups_db, 'name', name_ui)
                 group_details_hawk = self.ui_utils.find_row_in_list(server_groups_hawk, 'name', name_ui)
 
-                assert group_details_ui.get('Name') in group_details_hawk.get('name'), "UI: {}   Hawk: {}".format(group_details_ui.get('Name'), group_details_hawk.get('name'))
+                assert group_details_ui.get('Name') in group_details_hawk.get('name'),\
+                            "UI: {}   Hawk: {}".format(group_details_ui.get('Name'), group_details_hawk.get('name'))
                 assert group_details_ui.get('Name') == group_details_db.get('name')
                 assert group_details_ui.get("Profile") == group_details_hawk.get('data').get('Profile') == group_details_db.get('profile')
 
