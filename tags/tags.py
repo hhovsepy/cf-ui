@@ -93,12 +93,10 @@ class tags():
 
 
     def count_tags_on_page(self):
+        WebDriverWait(self.web_driver, 7).until(EC.visibility_of_any_elements_located((By.XPATH, "id('main_div')/div[@id='tab_div']/h3[contains(.,'Tag Assignment')]")))
         xpath = './/table/tbody/tr[contains(@id, "_tr")]'
-        WebDriverWait(self.web_driver, 7).until(
-            EC.visibility_of_any_elements_located((By.XPATH, xpath))
-            )
         num_tags = len( self.web_driver.find_elements_by_xpath(xpath) )
-        print "Numbers of tags: ", num_tags
+        #print "Numbers of tags: ", num_tags
         return num_tags
 
 
@@ -190,42 +188,35 @@ class tags():
 
         return self
 
+
     def drop_all_tags(self):
         driver = self.web_driver
+        wait = WebDriverWait(self.web_driver, 15)
         self.web_session.logger.info("drop all these tags")
 
-        if self.count_tags_on_page() == 0:
+        num_tags = self.count_tags_on_page()
+        if num_tags == 0:
             print "Nothing to delete."
             return self
 
-        magic_xpath = "(//td[@title='Click to remove this assignment'])[1]"
-        WebDriverWait(self.web_driver, 5).until(
-            EC.visibility_of_element_located((By.XPATH, magic_xpath))
-        )
-        tag_list = driver.find_elements_by_xpath(magic_xpath)
-        #num_tags = len(tag_list)
-
-        """
-        for x in range(0, num_tags):
-            print "Dropping first tag..."
-            self.drop_first_tag()
-        """
-
-        for x in tag_list:
-            x_button = driver.find_element_by_xpath(magic_xpath)
-            WebDriverWait(self.web_driver, 15).until(EC.element_to_be_clickable((By.XPATH, magic_xpath)))
-            x_button.click()
-            WebDriverWait(self.web_driver, 15).until(EC.element_to_be_clickable((By.XPATH, magic_xpath)))
-
+        first_xpath = "(//td[@title='Click to remove this assignment'])[1]"
         xpath_save = "//button[contains(@title,'Save Changes')]"
+        WebDriverWait(self.web_driver, 5).until(EC.visibility_of_element_located((By.XPATH, first_xpath)))
+
+        for i in range(0, num_tags):
+            #print "({})".format(i)
+            x_button = driver.find_element_by_xpath(first_xpath)
+            x_button.click()
+            wait.until(EC.staleness_of(driver.find_element_by_xpath(first_xpath)))
+
         save_button = driver.find_element_by_xpath(xpath_save)
-        WebDriverWait(self.web_driver, 7).until(  EC.element_to_be_clickable((By.XPATH, xpath_save))       )
+        wait.until(EC.presence_of_all_elements_located((By.XPATH, xpath_save)))
+        wait.until(EC.element_to_be_clickable((By.XPATH, xpath_save)))
         save_button.click()
 
         flash_caption = "id('flash_text_div')/div/strong[contains(.,'Tag edits were successfully saved')]"
         WebDriverWait(self.web_driver, 7).until(
-            EC.visibility_of_element_located((By.XPATH, flash_caption))
-            )
+            EC.visibility_of_element_located((By.XPATH, flash_caption)))
 
         import re
         src = self.web_driver.page_source

@@ -208,7 +208,7 @@ class NavigationTree():
             clickable.click()
 
     def select_and_click(self, click_point, select_option):
-        print "Start select_and_click..."
+        #print "Start select_and_click..."
         driver = self.web_driver
         xpath_top = ".//div[contains(@class, 'dropdown')]/button[contains(.,'{}')]".format(click_point)
         xpath_select = "{}/../ul[contains(@class, 'dropdown-menu')]/li/a[contains(.,'{}')]".format(xpath_top, select_option)
