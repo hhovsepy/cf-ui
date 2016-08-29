@@ -38,7 +38,7 @@ def _test_cfui_set_tag(web_session):
         .select_and_click('Policy', 'Edit Tags')\
         .hold_on(5)
     web_session.logger.info("collect existent tags")
-    stored_tags = t.tag_list_ui()
+    stored_tags = t.ui_tags()
     print "STORED TAGS == ", stored_tags
 
     t.set_tag(tag_cat, tag_add)
@@ -48,8 +48,7 @@ def _test_cfui_set_tag(web_session):
     web_session.logger.info("restoring saved tags")
     nav.jump_to_middleware_servers_view()\
         .to_first_details()\
-        .select_and_click('Policy', 'Edit Tags')\
-        .hold_on(5)
+        .select_and_click('Policy', 'Edit Tags')
 
     for tag_key in stored_tags.keys():
         for tag_value in stored_tags[tag_key]:
@@ -63,59 +62,49 @@ def _test_cfui_drop_tag(web_session, tag_cat, tag_add):
         .select_and_click('Policy', 'Edit Tags')\
         .hold_on(5)\
         .drop_tag(tag_cat, tag_add)
-    sleep(1)
-def _test_cfui_drop_all_tags(web_session):
-    NavigationTree(web_session).jump_to_middleware_servers_view().\
-        to_first_details()\
-        .select_and_click('Policy', 'Edit Tags') \
-        .hold_on(2)\
-        .drop_all_tags()
+    #sleep(1)
 
-    print "Test DROP_ALL_TAGS completed."
+
+def test_cfui_drop_all_tags(web_session):
+    NavigationTree(web_session).jump_to_middleware_servers_view().to_first_details().select_and_click('Policy', 'Edit Tags')
+    tags(web_session).drop_all_tags()
+
+
 def _test_cfui_wrong_drop_tag(web_session):
     try:
         NavigationTree(web_session).jump_to_middleware_servers_view().to_first_details().select_and_click('Policy', 'Edit Tags').hold_on(5).drop_tag('Department', 'Engiingghuheuiwh')
     except:
         print "Negative test (wrong drop of tag) - it works!"
 
-def test_cfui_set_few_tags(web_session):
-    web_session.logger.info("Begin set_few_tags test")
+
+def _test_cfui_set_few_tags(web_session):
+    logger = web_session.logger
+    logger.info("Begin set_few_tags test")
 
     tag_dict = {'Department': ['Engineering', 'Marketing']}
-
     t = tags(web_session)
+    nav = NavigationTree(web_session).jump_to_middleware_servers_view().to_first_details().select_and_click('Policy', 'Edit Tags')
 
-    nav = NavigationTree(web_session).jump_to_middleware_servers_view()\
-        .to_first_details()\
-        .select_and_click('Policy', 'Edit Tags').hold_on(5)
-
-    web_session.logger.info("Current URL: " + web_session.web_driver.current_url)
-
-    """
     web_session.logger.info("collect existent tags")
-    stored_tags = t.tag_list_ui()
+    stored_tags = t.ui_tags()
     print "STORED TAGS == ", stored_tags
 
-    web_session.logger.info("Starting to set given tags")
+    logger.info("Starting to set given tags")
     for tag_key in tag_dict.keys():
         for tag_value in tag_dict[tag_key]:
-            web_session.logger.info( " - Set tag: {} -> {}".format(tag_key, tag_value))
-            t.set_tag(tag_key, tag_value, navigation=True)
+            web_session.logger.info( " - Set tag: ({} -> {})".format(tag_key, tag_value))
+            t.set_tag(tag_key, tag_value)
 
 
     # removing all tags
-    web_session.logger.info(" == drop all tags == ")
+    logger.info(" == drop all tags == ")
     t.drop_all_tags()
 
     # restoring saved tags
-    web_session.logger.info("restoring saved tags")
-    nav.jump_to_middleware_servers_view()\
-        .to_first_details()\
-        .select_and_click('Policy', 'Edit Tags')\
-        .hold_on(5)
+    logger.info("restoring saved tags")
+    nav.jump_to_middleware_servers_view().to_first_details().select_and_click('Policy', 'Edit Tags')
 
     for tag_key in stored_tags.keys():
         for tag_value in stored_tags[tag_key]:
             print "Restore (", tag_key, " - ", tag_value, ")"
             t.set_tag(tag_key, tag_value)
-    """
