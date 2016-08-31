@@ -26,7 +26,7 @@ def _test_cfui_negative_navigate_select(web_session):
     except:
         print "Negative test - it works!"
 
-def _test_cfui_set_tag(web_session):
+def test_cfui_set_tags(web_session):
 
     tag_cat = 'Department'
     tag_add = 'Marketing'
@@ -35,8 +35,7 @@ def _test_cfui_set_tag(web_session):
 
     nav = NavigationTree(web_session).jump_to_middleware_servers_view()\
         .to_first_details()\
-        .select_and_click('Policy', 'Edit Tags')\
-        .hold_on(5)
+        .select_and_click('Policy', 'Edit Tags')
     web_session.logger.info("collect existent tags")
     stored_tags = t.ui_tags()
     print "STORED TAGS == ", stored_tags
@@ -75,7 +74,7 @@ def _test_cfui_wrong_drop_tag(web_session):
         print "Negative test (wrong drop of tag) - it works!"
 
 
-def test_cfui_set_few_tags(web_session):
+def _test_cfui_set_few_tags(web_session):
     logger = web_session.logger
     logger.info("Begin set_few_tags test")
 
@@ -106,3 +105,9 @@ def test_cfui_set_few_tags(web_session):
         for tag_value in stored_tags[tag_key]:
             print "Restore (", tag_key, " - ", tag_value, ")"
             t.set_tag(tag_key, tag_value)
+
+
+def _test_waiting(web_session):
+    #nav = NavigationTree(web_session).jump_to_middleware_servers_view().to_first_details().select_and_click('Policy', 'Edit Tags')
+    t = tags(web_session)
+    t.waiting()

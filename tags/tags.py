@@ -39,6 +39,19 @@ class tags():
                 option.click()
                 break
 
+    def get_tag_value_group(self):
+        xpath = "//*[@id='cat_tags_div']/select[@id='tag_add']"
+        tag_value_group = self.web_session.web_driver.find_element_by_xpath(xpath)
+        print "tag_value_group: ", tag_value_group.text
+        return tag_value_group.text
+
+    def tag_value_group_is_updated(self,state_before):
+        xpath = '//*[@id="cat_tags_div"]/select[@id="tag_add"]'
+        tag_value_group = self.web_session.web_driver.find_element_by_xpath(xpath)
+        print "tag_value_group: ", tag_value_group.text
+        return True
+
+
 
     def set_tag(self, tag_name, tag_value):
         driver = self.web_session.web_driver
@@ -53,12 +66,16 @@ class tags():
         option_xpath = "//select[@id='{}']/../div[contains(@class, 'btn-group')]/div/ul/li/a"
         xpath_save = "//button[contains(@title,'Save Changes')]"
 
+        original_tg_values = self.get_tag_value_group()
+
         tag_button = column_xpath.format("tag_cat")
         self.button_click(tag_button, 7)
         option_button = option_xpath.format("tag_cat")
         self.click_option(tag_name, option_button)
 
         #sleep(3)
+
+        wait.until(lambda x: self.tag_value_group_is_updated(original_tg_values))
 
         value_button = column_xpath.format("tag_add")
         self.button_click(value_button, 7)
@@ -229,3 +246,8 @@ class tags():
         assert(text_found != None), "Not Found."
 
         return self
+
+    def waiting(self):
+        wait = WebDriverWait(self.web_driver, 15)
+        self.web_session.logger.info("Test of Waiting.Until...")
+        wait.until((lambda x: False))
