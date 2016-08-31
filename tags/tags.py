@@ -18,23 +18,18 @@ class tags():
         self.web_driver = _web_session.web_driver
         self.nav = NavigationTree(self.web_session)
 
-    def waiting_ability(self, xpath, seconds):
-        try:
-            WebDriverWait(self.web_driver, seconds).until(
-                EC.element_to_be_clickable((By.XPATH, xpath)))
-        except:
-            self.web_session.logger.info(" Given object is not clickable. (waiting_clickability)")
-            self.waiting_ability(xpath, seconds - 1)
-
 
     def button_click(self, xpath, seconds):
         driver = self.web_driver
         self.web_session.logger.info(" Exact XPath: {}".format(xpath))
-        self.waiting_ability(xpath, seconds)
-        try:
-            driver.find_element_by_xpath(xpath).click()
-        except:
-            self.button_click(xpath, seconds-1 )
+        wait = WebDriverWait(self.web_driver, seconds)
+
+        wait.until(EC.visibility_of_element_located((By.XPATH, xpath)))
+        click = driver.find_element_by_xpath(xpath)
+        wait.until(EC.visibility_of(click))
+        wait.until(EC.element_to_be_clickable((By.XPATH, xpath)))
+        click.click()
+        #wait.until(EC.staleness_of(click))
 
 
     def click_option(self, option_name, xpath):
@@ -48,38 +43,47 @@ class tags():
     def set_tag(self, tag_name, tag_value):
         driver = self.web_session.web_driver
         logger = self.web_session.logger
-
-        #if navigation:
-        #    NavigationTree(self.web_session).jump_to_middleware_servers_view().to_first_details().select_and_click('Policy', 'Edit Tags')
+        wait = WebDriverWait(self.web_driver, 5)
 
         if tag_value in self.ui_tags()[tag_name]:
             print "Already added (set_tag: ", tag_name, "::", tag_value, ")"
             return self
 
-        column_xpath = "//button[@data-toggle='dropdown'][@data-id='{}']"
+        column_xpath = "//button[@data-toggle='dropdown'][@data-id='{}']"  # /span/span[@class='caret']
         option_xpath = "//select[@id='{}']/../div[contains(@class, 'btn-group')]/div/ul/li/a"
         xpath_save = "//button[contains(@title,'Save Changes')]"
 
         tag_button = column_xpath.format("tag_cat")
         self.button_click(tag_button, 7)
-
         option_button = option_xpath.format("tag_cat")
         self.click_option(tag_name, option_button)
 
+        #sleep(3)
+
         value_button = column_xpath.format("tag_add")
         self.button_click(value_button, 7)
+
+        #value_button = "//button[@data-toggle='dropdown'][@data-id='tag_add']/../div"
+        print "-- Exact XPath: ", value_button
+        #wait.until(EC.visibility_of_element_located((By.XPATH, value_button)))
+        click = driver.find_element_by_xpath(value_button)
+        #wait.until(EC.visibility_of(click))
+        wait.until(EC.element_to_be_clickable((By.XPATH, value_button)))
+        wait.until(EC.visibility_of_any_elements_located((By.XPATH, value_button)))
+        #click.click()
 
         value_option = option_xpath.format("tag_add")
         self.click_option(tag_value, value_option)
 
         save_click = driver.find_element_by_xpath(xpath_save)
-        WebDriverWait(self.web_driver, 5).until(
+        wait.until(
             EC.element_to_be_clickable((By.XPATH, xpath_save))
             )
+        wait.until(EC.visibility_of_element_located((By.XPATH, xpath_save)))
         save_click.click()
 
         flash_caption = "id('flash_text_div')/div/strong[contains(.,'Tag edits were successfully saved')]"
-        WebDriverWait(self.web_driver, 7).until(
+        wait.until(
             EC.visibility_of_element_located((By.XPATH, flash_caption))
             )
 
@@ -93,7 +97,7 @@ class tags():
 
 
     def count_tags_on_page(self):
-        WebDriverWait(self.web_driver, 7).until(EC.visibility_of_any_elements_located((By.XPATH, "id('main_div')/div[@id='tab_div']/h3[contains(.,'Tag Assignment')]")))
+        #WebDriverWait(self.web_driver, 7).until(EC.visibility_of_any_elements_located((By.XPATH, "id('main_div')/div[@id='tab_div']/h3[contains(.,'Tag Assignment')]")))
         xpath = './/table/tbody/tr[contains(@id, "_tr")]'
         num_tags = len( self.web_driver.find_elements_by_xpath(xpath) )
         #print "Numbers of tags: ", num_tags
@@ -194,14 +198,14 @@ class tags():
         wait = WebDriverWait(self.web_driver, 15)
         self.web_session.logger.info("drop all these tags")
 
+        first_xpath = "(//td[@title='Click to remove this assignment'])[1]"
+        xpath_save = "//button[contains(@title,'Save Changes')]"
+        wait.until(EC.visibility_of_element_located((By.XPATH, first_xpath)))
+
         num_tags = self.count_tags_on_page()
         if num_tags == 0:
             print "Nothing to delete."
             return self
-
-        first_xpath = "(//td[@title='Click to remove this assignment'])[1]"
-        xpath_save = "//button[contains(@title,'Save Changes')]"
-        WebDriverWait(self.web_driver, 5).until(EC.visibility_of_element_located((By.XPATH, first_xpath)))
 
         for i in range(0, num_tags):
             #print "({})".format(i)

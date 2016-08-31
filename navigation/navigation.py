@@ -228,10 +228,6 @@ class NavigationTree():
         self.waiting_ability(xpath_select, 7)
         self.power_click(driver.find_element_by_xpath(xpath_select))
 
-        #print "select_and_click - completed."
-        #sleep(5)
-        #print "Current page URL (3): ", driver.current_url
-
         return self
 
     def to_exact_details(self, param='first'):
