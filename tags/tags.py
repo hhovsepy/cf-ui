@@ -1,10 +1,7 @@
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-from selenium.webdriver.common.action_chains import ActionChains
 from navigation.navigation import NavigationTree
-
-from time import sleep
 
 
 class tags():
@@ -124,7 +121,7 @@ class tags():
             #print "   -->  Number of tags (count_tags_on_page) == 0 "
             return 0
 
-        #sleep(2)
+
         #WebDriverWait(self.web_driver, 5).until(EC.visibility_of_element_located((By.XPATH, xpath)))
         num_tags = len( driver.find_elements_by_xpath(xpath) )
         #print "Number of tags (count_tags_on_page): ", num_tags
@@ -224,7 +221,6 @@ class tags():
         text_to_search = r'Tag edits were successfully saved'
         text_found = re.search(text_to_search, src)
         assert (text_found != None), "Not Found."
-
         return self
 
 
@@ -268,7 +264,3 @@ class tags():
 
         return self
 
-    def _waiting(self):
-        wait = WebDriverWait(self.web_driver, 15)
-        self.web_session.logger.info("Test of Waiting.Until...")
-        wait.until((lambda x: False))
