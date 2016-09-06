@@ -17,7 +17,6 @@ def web_session(request):
 
 def _test_cfui_select(web_session):
     NavigationTree(web_session).jump_to_middleware_providers_view().to_first_details().select_and_click("Monitoring", "Timelines")
-    sleep(1)
 
 
 def _test_cfui_negative_navigate_select(web_session):
@@ -26,39 +25,41 @@ def _test_cfui_negative_navigate_select(web_session):
     except:
         print "Negative test - it works!"
 
-def test_cfui_set_tags(web_session):
 
+def test_cfui_restore_tags(web_session):
+    logger = web_session.logger
     tag_cat = 'Department'
     tag_add = 'Marketing'
 
+    tags_5 = {
+            'Department': ['Engineering'],
+            'LifeCycle *': ['Fully retire VM and remove from Provider'],
+            'Quota - Max Storage *': ['1TB'],
+            #'Auto Approve - Max VM *': ['5'],
+            'Auto Approve - Max Memory *': ['8GB']
+        }
     t = tags(web_session)
 
-    nav = NavigationTree(web_session).jump_to_middleware_servers_view()\
-        .to_first_details()\
-        .select_and_click('Policy', 'Edit Tags')
+    nav = NavigationTree(web_session).jump_to_middleware_servers_view().to_first_details().select_and_click('Policy', 'Edit Tags')
     web_session.logger.info("collect existent tags")
-    stored_tags = t.ui_tags()
+    #stored_tags = t.ui_tags()
+    stored_tags = tags_5
     print "STORED TAGS == ", stored_tags
+    #t.set_tag(tag_cat, tag_add)
 
-    t.set_tag(tag_cat, tag_add)
+    logger.info("drop all tags")
     t.drop_all_tags()
 
-    # restoring saved tags
-    web_session.logger.info("restoring saved tags")
-    nav.jump_to_middleware_servers_view()\
-        .to_first_details()\
-        .select_and_click('Policy', 'Edit Tags')
-
+    logger.info("restoring saved tags")
     for tag_key in stored_tags.keys():
         for tag_value in stored_tags[tag_key]:
             print "Restore (", tag_key, " - ", tag_value, ")"
+            nav.jump_to_middleware_servers_view().to_first_details().select_and_click('Policy', 'Edit Tags')
             t.set_tag(tag_key, tag_value)
 
 
 def _test_cfui_drop_tag(web_session, tag_cat, tag_add):
-    NavigationTree(web_session).jump_to_middleware_servers_view().\
-        to_first_details()\
-        .select_and_click('Policy', 'Edit Tags')\
+    NavigationTree(web_session).jump_to_middleware_servers_view().to_first_details().select_and_click('Policy', 'Edit Tags')\
         .drop_tag(tag_cat, tag_add)
 
 
@@ -74,11 +75,30 @@ def _test_cfui_wrong_drop_tag(web_session):
         print "Negative test (wrong drop of tag) - it works!"
 
 
-def _test_cfui_set_few_tags(web_session):
+def _test_cfui_number_of_tags(web_session):
+    t = tags(web_session)
+    NavigationTree(web_session).jump_to_middleware_servers_view().to_first_details().select_and_click('Policy', 'Edit Tags')
+
+    web_session.logger.info("collect existent tags")
+    stored_tags = t.ui_tags()
+    print "SAVED TAGS == ", stored_tags
+    # TODO: get tags info from db
+
+
+def _test_cfui_set_multi_tags(web_session):
     logger = web_session.logger
     logger.info("Begin set_few_tags test")
 
-    tag_dict = {'Department': ['Engineering', 'Marketing']}
+    tags_2 = {'Department': ['Engineering', 'Marketing']}
+    tags_5 = {
+        'Department': ['Engineering'],
+        'LifeCycle *': ['Fully retire VM and remove from Provider'],
+        'Quota - Max Storage *': ['1TB'],
+        'Auto Approve - Max VM *': ['5'],
+        'Auto Approve - Max Memory *': ['8GB']
+    }
+
+    tag_dict = tags_2
     t = tags(web_session)
     nav = NavigationTree(web_session).jump_to_middleware_servers_view().to_first_details().select_and_click('Policy', 'Edit Tags')
 
@@ -104,10 +124,7 @@ def _test_cfui_set_few_tags(web_session):
     for tag_key in stored_tags.keys():
         for tag_value in stored_tags[tag_key]:
             print "Restore (", tag_key, " - ", tag_value, ")"
+            nav.jump_to_middleware_servers_view().to_first_details().select_and_click('Policy', 'Edit Tags')
             t.set_tag(tag_key, tag_value)
 
 
-def _test_waiting(web_session):
-    #nav = NavigationTree(web_session).jump_to_middleware_servers_view().to_first_details().select_and_click('Policy', 'Edit Tags')
-    t = tags(web_session)
-    t.waiting()
