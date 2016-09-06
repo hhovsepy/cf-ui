@@ -228,8 +228,8 @@ class NavigationTree():
         xpath_select = "{}/../ul[contains(@class, 'dropdown-menu')]/li/a[contains(.,'{}')]".format(xpath_top, select_option)
         #xpath_select = "//a[contains(.,'{}')]".format(select_option)
         # //a[@title='Add a New Middleware Provider']
-        print "Exact xpath_from: ", xpath_from
-        print "Exact xpath_select: ", xpath_select
+        #print "Exact xpath_from: ", xpath_from
+        #print "Exact xpath_select: ", xpath_select
 
         self.power_click(driver.find_element_by_xpath(xpath_top))
 
