@@ -42,6 +42,9 @@ def test_cfui_validate_providers_list(web_session):
 def test_cfui_validate_providers_details(web_session):
     assert providers(web_session).validate_providers_details()
 
+def test_cfui_recheck_authentication(web_session):
+    assert providers(web_session).recheck_authentication()
+
 """
 
 
