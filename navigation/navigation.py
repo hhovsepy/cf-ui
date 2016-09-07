@@ -1,5 +1,5 @@
 from selenium.webdriver.common.action_chains import ActionChains
-from time import sleep
+
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
@@ -131,13 +131,14 @@ class NavigationTree():
             operation = action._operation._operation
             elem = driver.find_element_by_xpath(target)
             hover.move_to_element(elem).perform()
-            sleep(2) # wait sec to load menu
+            wait = WebDriverWait(self.web_driver, 5)
+            wait.until(EC.element_to_be_clickable(elem))
             if operation == "Click":
                 elem.click()
-            sleep(2)
         except:
-            self.web_session.logger.warning(" Clicking goes on next turn. Possibly, recursion...")
-            self.click_turn( driver, step )
+            #self.web_session.logger.warning(" Clicking goes on next turn. Possibly, recursion...")
+            #self.click_turn( driver, step )
+            pass
 
 
     def navigate_to_middleware_providers_view(self):
@@ -208,7 +209,6 @@ class NavigationTree():
             clickable.click()
 
     def select_and_click(self, click_point, select_option):
-        #print "Start select_and_click..."
         driver = self.web_driver
         xpath_top = ".//div[contains(@class, 'dropdown')]/button[contains(.,'{}')]".format(click_point)
         xpath_select = "{}/../ul[contains(@class, 'dropdown-menu')]/li/a[contains(.,'{}')]".format(xpath_top, select_option)
@@ -227,11 +227,10 @@ class NavigationTree():
 
         self.waiting_ability(xpath_select, 7)
         self.power_click(driver.find_element_by_xpath(xpath_select))
-
         return self
 
-    def to_exact_details(self, param='first'):
 
+    def to_exact_details(self, param='first'):
         driver = self.web_driver
         list_view_click = "//i[contains(@class,'fa fa-th-list')]"
         first_item = ".//*[@id='list_grid']/table/tbody/tr"
@@ -247,7 +246,6 @@ class NavigationTree():
         except: pass
 
         assert (use_numeric_param == True or param == 'first' or param == 'last'), "-- Possible wrong value of param '{}'?".format(param)
-
         if len(sub_links) > 0:
 
             if param == 'first':
@@ -259,15 +257,16 @@ class NavigationTree():
             elif use_numeric_param:
                 assert (ind <= num_link and ind >= 0), "-- Definitely wrong value of param: '{}'".format(param)
                 sub_links[ind].click()
-
         else:
             # raise ValueError("Not enough items for searching!") # ??
             print "Not enough items for selection!"
         return self
 
+
     def to_first_details(self):
         self.to_exact_details('first')
         return self
+
 
     def to_last_details(self):
         self.to_exact_details('last')
