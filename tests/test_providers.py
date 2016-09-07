@@ -49,7 +49,12 @@ def test_cfui_recheck_authentication(web_session):
 
 
 def test_cfui_add_provider_double_host(web_session):
+
+    # Given that provider already exists
+    
     provs = providers(web_session)
+    #provs.add_provider_if_not_present()
+    #provs.add_provider(delete_if_provider_present=False)
     try:
         provs.add_wrong_provider_double_host()
     except ValueError:
@@ -58,6 +63,7 @@ def test_cfui_add_provider_double_host(web_session):
 
 def test_cfui_add_provider_missied_type(web_session):
     provs = providers(web_session)
+    #provs.add_provider_if_not_present()
     try:
         provs.add_wrong_provider_missed_type()
     except ValueError:
@@ -66,6 +72,7 @@ def test_cfui_add_provider_missied_type(web_session):
 
 def test_cfui_add_provider_missied_everything(web_session):
     provs = providers(web_session)
+    #provs.add_provider_if_not_present()
     try:
         provs.add_wrong_provider_missed_everything()
     except ValueError:
