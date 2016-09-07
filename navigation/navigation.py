@@ -1,9 +1,8 @@
 from selenium.webdriver.common.action_chains import ActionChains
-from time import sleep
 
-from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.common.by import By
 
 class UI_Point():
 
@@ -122,6 +121,7 @@ class NavigationTree():
         current_page = self.web_driver.current_url
         target_page = self.paths.get(goal)
         if not current_page.endswith(target_page) or force_navigation:
+
             for step in route.steps:
                 self.click_turn(driver, step)
 
@@ -132,18 +132,17 @@ class NavigationTree():
             action = self._tree.get(step)
             target = action._point._value
             operation = action._operation._operation
-            self.wait.until(EC.visibility_of_element_located((By.XPATH, target)))
             elem = driver.find_element_by_xpath(target)
             hover.move_to_element(elem).perform()
-            self.wait.until(EC.visibility_of(elem))
+            wait = WebDriverWait(self.web_driver, 5)
+            wait.until(EC.element_to_be_clickable(elem))
             if operation == "Click":
-                self.wait.until(EC.element_to_be_clickable((By.XPATH, target)))
                 elem.click()
 
         except:
-            self.web_session.logger.warning(" Clicking goes on next turn. Possibly, recursion...")
-            self.click_turn( driver, step )
-
+            #self.web_session.logger.warning(" Clicking goes on next turn. Possibly, recursion...")
+            #self.click_turn( driver, step )
+            pass
 
 
     def navigate_to_middleware_providers_view(self):
@@ -200,9 +199,45 @@ class NavigationTree():
         self._jump_to('middleware_domains', force_navigation)
         return self
 
+    def waiting_ability(self, xpath, seconds):
+        try:
+            WebDriverWait(self.web_driver, seconds).until(
+                EC.visibility_of_element_located((By.XPATH, xpath)))
+        except:
+            self.web_session.logger.info(" Given object is not clickable. (waiting_clickability)")
+            self.waiting_ability(xpath, seconds - 1)
+
+    def power_click(self, clickable):
+        driver = self.web_driver
+        hover = ActionChains(driver)
+        if clickable:
+            hover.move_to_element(clickable).perform()
+
+            clickable.click()
+
+    def select_and_click(self, click_point, select_option):
+        driver = self.web_driver
+        xpath_top = ".//div[contains(@class, 'dropdown')]/button[contains(.,'{}')]".format(click_point)
+        xpath_select = "{}/../ul[contains(@class, 'dropdown-menu')]/li/a[contains(.,'{}')]".format(xpath_top, select_option)
+
+        WebDriverWait(self.web_driver, 7).until(
+            EC.visibility_of_element_located((By.XPATH, xpath_top))
+            )
+
+        found_top = driver.find_elements_by_xpath(xpath_top)
+        found_select = driver.find_elements_by_xpath(xpath_select)
+        if len(found_top)==0 or len(found_select)==0:
+            raise Exception("Page does not contain such pattern(s) {}, {}: ".format(click_point, select_option))
+
+        self.waiting_ability(xpath_top, 7)
+        self.power_click(driver.find_element_by_xpath(xpath_top))
+
+        self.waiting_ability(xpath_select, 7)
+        self.power_click(driver.find_element_by_xpath(xpath_select))
+        return self
+
 
     def to_exact_details(self, param='first'):
-
         driver = self.web_driver
         list_view_click = "//i[contains(@class,'fa fa-th-list')]"
         first_item = ".//*[@id='list_grid']/table/tbody/tr"
@@ -217,9 +252,7 @@ class NavigationTree():
             use_numeric_param = True
         except: pass
 
-        assert (ind <= num_link and ind >= 0), "-- Definitely wrong value of param: '{}'".format(param)
         assert (use_numeric_param == True or param == 'first' or param == 'last'), "-- Possible wrong value of param '{}'?".format(param)
-
         if len(sub_links) > 0:
 
             if param == 'first':
@@ -229,18 +262,22 @@ class NavigationTree():
                 sub_links[num_link - 1].click()
 
             elif use_numeric_param:
+                assert (ind <= num_link and ind >= 0), "-- Definitely wrong value of param: '{}'".format(param)
                 sub_links[ind].click()
-
         else:
             # raise ValueError("Not enough items for searching!") # ??
             print "Not enough items for selection!"
         return self
 
+
     def to_first_details(self):
         self.to_exact_details('first')
+        return self
+
 
     def to_last_details(self):
         self.to_exact_details('last')
+        return self
 
 
     def is_ok(self, point):
