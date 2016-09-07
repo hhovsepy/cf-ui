@@ -19,11 +19,13 @@ def _test_cfui_datasource_list(web_session):
     web_session.logger.info("Begin datasource list test")
     assert datasources(web_session).validate_datasource_list()
 
+
 def _test_cfui_datasource_detail(web_session):
     web_session.logger.info("Begin datasource detail page test")
     assert datasources(web_session).validate_datasource_detail()
 
-def _test_cfui_delete_datasource_a(web_session):
+
+def test_cfui_delete_datasource_a(web_session):
     web_session.logger.info("Begin undeletable datasource test A")
     driver = web_session.web_driver
     ds = datasources(web_session)
@@ -33,11 +35,8 @@ def _test_cfui_delete_datasource_a(web_session):
     alert = driver.switch_to_alert()
     alert.accept()
     number_after = ds.count_datasources()
-    #print "Before: ", number_before,  " -- After: ", number_after
-    if number_before != number_after+1:
-        print "== BUG STILL PRESENT. =="
+    assert (number_before == number_after + 1), "== Datasource can't be deleted. =="
 
-    #assert number_before == number_after+1, "Bug still present."
 
 def test_cfui_delete_datasource_b(web_session):
     web_session.logger.info("Begin undeletable datasource test B")
@@ -47,12 +46,9 @@ def test_cfui_delete_datasource_b(web_session):
     number_before = ds.count_datasources()
     nav.check_first_datasource()
     nav.select_and_click('Operations', 'Remove')
-    sleep(3)
     alert = driver.switch_to_alert()
     alert.accept()
     number_after = ds.count_datasources()
-    if number_before != number_after + 1:
-        print "== BUG STILL PRESENT. =="
-
-
-        #print "Current URL == : ", web_session.web_driver.current_url
+    print "Datasources BEFORE: ", number_before
+    print "Datasources  AFTER: ", number_after
+    assert (number_before == number_after + 1), "== Datasource can't be deleted. =="
