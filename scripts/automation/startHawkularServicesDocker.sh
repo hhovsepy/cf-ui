@@ -1,0 +1,1 @@
+docker/startHawkularServices/start.sh
