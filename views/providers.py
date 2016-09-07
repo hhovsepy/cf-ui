@@ -370,8 +370,6 @@ class providers():
         elem_hawkularVerify_password = self.web_driver.find_element_by_xpath("//input[@id='default_verify']")
         elem_hawkularVerify_password.send_keys(self.hawkular_password)
         self.web_driver.find_element_by_xpath("//button[@alt='Add this Middleware Provider']").click()
-
-        #flasher = driver.find_element_by_xpath("//strong[contains(.,'Type is required')]")
         if self.web_driver.find_element_by_xpath("//strong[contains(.,'Type is required')]"):
             raise ValueError("Exception: Type of provider should be choosen!")
 
@@ -386,19 +384,8 @@ class providers():
 
         NavigationTree(self.web_session).jump_to_middleware_providers_view().select_and_click('Configuration', 'Add a New Middleware Provider')
         self.web_driver.implicitly_wait(5)
-
-        #elem_provider_name = self.web_driver.find_element_by_xpath("//input[@id='name']")
-        #elem_provider_name.send_keys(self.provider_name)
-
-        #elem_hawkular_user = self.web_driver.find_element_by_xpath("//input[@id='default_userid']")
-        #elem_hawkular_user.send_keys(self.hawkular_user)
-        #elem_hawkular_password = self.web_driver.find_element_by_xpath("//input[@id='default_password']")
-        #elem_hawkular_password.send_keys(self.hawkular_password)
-        #elem_hawkularVerify_password = self.web_driver.find_element_by_xpath("//input[@id='default_verify']")
-        #elem_hawkularVerify_password.send_keys(self.hawkular_password)
         self.web_driver.find_element_by_xpath("//button[@alt='Add this Middleware Provider']").click()
 
-        #flasher = driver.find_element_by_xpath("//strong[contains(.,'Type is required')]")
         if self.web_driver.find_element_by_xpath("//strong[contains(.,'Type is required')]"):
             raise ValueError("Exception: Type of provider should be choosen!")
 
@@ -409,8 +396,6 @@ class providers():
         self.provider_name = self.web_session.HAWKULAR_PROVIDER_NAME
         self.host_name = self.web_session.HAWKULAR_HOSTNAME
 
-        #self.port = self.web_session.HAWKULAR_PORT
-        # make port wrong
         self.port = self.web_session.HAWKULAR_PORT + '100'
         print "Actual port number=", self.port
 
