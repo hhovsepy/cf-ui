@@ -65,7 +65,7 @@ class eap_alerts():
 
         self.web_session.web_driver.get("{}/miq_policy/explorer".format(self.web_session.MIQ_URL))
 
-        assert ui_utils(self.web_session).waitForTextOnPage("Alerts", 15).click()
+assert ui_utils(self.web_session).waitForTextOnPage("Alerts", 15).click()
         assert ui_utils(self.web_session).waitForTextOnPage("All Alerts", 15).click()
         assert ui_utils(self.web_session).waitForTextOnPage("Heap Alert", 15).click()
         configurtion = self.web_driver.find_element_by_xpath('.//*[@title="Configuration"]').click()
@@ -84,20 +84,3 @@ class eap_alerts():
         alert_description = self.web_driver.find_element_by_xpath(".//*[@id='description']")
         alert_description().send_keys('Heap-Alert')
         save= self.web_driver.find_element_by_xpath(".//*[@id='buttons_on']/button[1]").click()
-
-
-
-
-
-
-
-
-        
-
-
-
-
-
-
-
-
